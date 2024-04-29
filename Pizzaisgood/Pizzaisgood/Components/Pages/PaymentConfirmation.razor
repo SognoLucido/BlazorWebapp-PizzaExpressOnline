@@ -1,0 +1,99 @@
+﻿@page "/confirm"
+
+
+@rendermode InteractiveServer
+@inject Orderlist orderlist
+@inject NavigationManager navigation
+@inject blazorviewPaymentForm? BlazorviewPaymentForm
+@inject ICrudController controller
+
+
+
+    
+    <div class="container pb-4" style="margin-top:200px">
+            <div class="row">
+                <div class="col-md-6 d-flex d-xl-flex justify-content-end justify-content-xl-end">
+            <button class="btn btn-danger shadow" disabled="@BlazorviewPaymentForm.notActive" style="width: 50%;" @onclick="(()=>Transaction(false))">
+                        <br><strong>Payment Declined</strong><br><br>
+                     </button>
+                </div>
+                <div class="col-md-6 d-flex justify-content-start">
+                <button class="btn btn-primary shadow" type="button" disabled="@BlazorviewPaymentForm.notActive" style="width: 50%;" @onclick="(()=>Transaction(true))">
+                        <br><strong>Transaction Approved</strong><br><br>
+                    </button>
+                </div>
+            </div>
+        </div>
+       
+        <div class="container">
+        <hr />
+            <div class="row">
+                <div class="col-md-12">
+                @foreach(var rep in report)
+                {
+                    <p class="lead text-center">@rep</p>
+                }
+               
+                </div>
+            </div>
+        </div>
+ 
+@* } *@
+
+@code {
+    List<string> report = new();
+
+   
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+
+        if (BlazorviewPaymentForm is null || BlazorviewPaymentForm.FirstName is null)
+        {
+            navigation.NavigateTo("/");
+
+        }
+
+
+    }
+  
+
+    private async Task Transaction(bool posorneg)
+    {
+        BlazorviewPaymentForm.notActive = true;
+        BlazorviewPaymentForm.PaymentStatus = posorneg;
+
+        if(posorneg)
+            report.Add("saving the payment with PaymentStatus set to 'Successful' in the database -->");
+        else
+            report.Add("saving the payment with PaymentStatus set to 'Unsuccessful' in the database -->");
+
+        await controller.TransationSaving(BlazorviewPaymentForm, orderlist);
+        report[0] += " OK";
+
+        StateHasChanged();
+
+        report.Add("Check the Admin page for Orders ..redirect to root in 5 sec");
+        StateHasChanged();
+        
+        //  BlazorviewPaymentForm = null;
+
+       
+
+
+
+        await Task.Delay(5000);
+
+
+        // BlazorviewPaymentForm = null;
+        navigation.NavigateTo("/", true);
+    }
+
+
+
+    public void Dispose()
+    {
+        Console.WriteLine("dispse triggered");
+    }
+
+}

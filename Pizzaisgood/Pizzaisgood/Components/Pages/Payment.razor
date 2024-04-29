@@ -1,0 +1,200 @@
+﻿
+@page "/payment"
+@inject Orderlist orderlist
+@rendermode InteractiveServer
+@inject NavigationManager navigation
+@inject Generatefakedata fakedata
+@inject blazorviewPaymentForm? blazorviewPaymentForm
+@attribute [StreamRendering]
+
+@if (orderlist.keyValuePairs.Count == 0){}
+else 
+{
+    <div class="container" style="margin-top:100px">
+    
+        <div class="text-center py-5 pb-4">
+            <img class="d-block mx-auto mb-4" src="/bootstrap-logo.svg" alt="" width="72" height="57">
+                <h2>Checkout. This is for demonstration purposes. DO NOT insert real data.</h2>
+                <button class="btn btn-primary" @onclick="@(() =>Generatefakedataz())">Generate Fake data </button><span class="ms-lg-2">@Thanks</span>
+        </div>
+        <div class="row g-5">
+            <div class="col-md-5 col-lg-4 order-md-last">
+                    <h4 class="d-flex justify-content-between align-items-center mb-3"><span class="text-primary">Your cart</span><span class="badge rounded-pill bg-primary">@Itemcount</span></h4>
+                <ul class="list-group mb-3">
+
+                        @foreach (var list in orderlist.keyValuePairs)
+                        {
+                            <li class="list-group-item d-flex justify-content-between lh-sm">
+                                <div>
+                                    <h6 class="my-0">x @list.Value.Item1 @list.Value.Item2</h6>
+                                </div><span class="text-body-secondary">$@list.Value.Item3</span>
+                            </li>
+                        }
+                        <li class="list-group-item d-flex justify-content-between"><span>Total (USD)</span><strong>$@orderlist.Totalprice</strong></li>
+                </ul>
+            </div>
+                <div class="col-md-7 col-lg-8">
+                <h4 class="mb-3">Billing address</h4>
+                 <EditForm Enhance Model="blazorviewPaymentForm" method="post" FormName="paymentForm" OnValidSubmit="SubmitForm">
+                     <AntiforgeryToken/>
+                     <DataAnnotationsValidator/>
+                 
+                    <div class="row g-3">
+
+                        <div class="col-sm-6">
+                            <label>First name</label>
+                            <InputText class="form-control form-control" type="text" @bind-Value="blazorviewPaymentForm.FirstName"/>
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.FirstName)" />
+                        </div>
+
+                        <div class="col-sm-6">
+                                <label>Last name</label>
+                            <InputText class="form-control form-control"  type="text" @bind-Value="blazorviewPaymentForm.LastName"/>
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.LastName)" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label form-label">Email (Optional)</label>
+                               <InputText class="form-control form-control"  placeholder="you@example.com" @bind-Value="blazorviewPaymentForm.Email"/>      
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label form-label" for="address">Address</label>
+                            <InputText class="form-control form-control" placeholder="1234 Main St"  @bind-Value="blazorviewPaymentForm.Address"/>
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.Address)" />
+                        </div>
+
+                        <div class="col-12">
+                            <label class="form-label form-label">Address 2 (Optional)</label>
+                             <InputText class="form-control form-control"  placeholder="Apartment or suite" @bind-Value="blazorviewPaymentForm.Address2"/>
+                        </div>
+
+                        <div class="col-md-5">
+                            <label class="form-label form-label" >Country</label>
+                              <InputText class="form-control form-control"  @bind-Value="blazorviewPaymentForm.County"/>
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.County)" />
+                        </div>
+
+                        <div class="col-md-4">
+                            <label class="form-label form-label">State</label>
+                              <InputText class="form-control form-control" @bind-Value="blazorviewPaymentForm.State"/>
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.State)" />
+                        </div>
+
+                        <div class="col-md-3">
+                            <label class="form-label form-label" for="zip">Zip</label>
+                                <InputText class="form-control form-control"  @bind-Value="blazorviewPaymentForm.Zip"/>
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.Zip)" />
+                      
+                        </div>
+                            <hr class="my-4 mb-2">
+                            <h4 class="mb-3">Contact info</h4>
+                            <div class="col-12">
+                                <label class="form-label form-label">PhoneNumber</label>
+                                <InputText class="form-control form-control"  @bind-Value="blazorviewPaymentForm.PhoneNumber" />
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.PhoneNumber)" />
+                            </div>
+                    </div>
+                    <hr class="my-4">
+                    <h4 class="mb-3">Payment</h4>
+                    <div class="my-3">
+                        <InputRadioGroup @bind-Value="blazorviewPaymentForm.PaymentMethod">
+                        <div class="form-check">
+                                   <InputRadio class="form-check-input" Value="blazorviewPaymentForm.Credit"/>
+                                    @*  <input type="radio" checked="" class="form-check-input" id="credit" name="paymentMethod" required="">*@
+                            <label class="form-label form-check-label">Credit card</label>
+                            </div> 
+                        <div class="form-check">
+                                    <InputRadio class="form-check-input" Value="blazorviewPaymentForm.Debit" />
+                            <label class="form-label form-check-label" for="debit">Debit card</label></div>
+                        <div class="form-check">
+                                    <InputRadio class="form-check-input" Value="blazorviewPaymentForm.Paypal" />
+                            <label class="form-label form-check-label" >PayPal</label></div>
+                        </InputRadioGroup>
+                    </div>
+                    <div class="row gy-3">
+                        <div class="col-md-6">
+                            <label class="form-label form-label" for="cc-name">Name on card</label>
+                                    <InputText class="form-control form-control" type="text" placeholder="Full name as displayed on card" @bind-Value="blazorviewPaymentForm.CardHolderName" />
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.CardHolderName)" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label form-label" for="cc-number">Credit card number</label>
+                                    <InputText class="form-control form-control" type="text" @bind-Value="blazorviewPaymentForm.Cardnumbersinfo" />
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.Cardnumbersinfo)" />
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label form-label" for="cc-expiration">Expiration</label>
+                                     <InputText class="form-control form-control" type="text" @bind-Value="blazorviewPaymentForm.ExpiryDate" />
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.ExpiryDate)" />
+                       
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label form-label" for="cc-cvv">CVV</label>
+                                     <InputText class="form-control form-control"  @bind-Value="blazorviewPaymentForm.CVV" />
+                                <ValidationMessage For="@(() => blazorviewPaymentForm.CVV)" />
+                        </div>
+                    </div>
+                        <hr class="my-4"><button class="btn btn-primary btn-lg w-100 mb-4" type="submit">Proceed</button>
+                    </EditForm>
+            </div>
+        </div>
+   
+    </div>
+}
+
+@code {
+
+    public int Itemcount = 0;
+
+    string Thanks = "thanks to randomuser.me/api/";
+
+  
+
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        Itemcount =  orderlist.Counttotalitems();
+
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+
+        if (Itemcount == 0 || blazorviewPaymentForm.notActive)
+        {
+            try
+            {
+                navigation.NavigateTo("/");
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
+    }
+
+    private void SubmitForm()
+    {
+        Console.WriteLine("Ok");
+        //BlazorviewPaymentForm = blazorviewPaymentForm;
+        //  blazorviewPaymentForm = new();
+
+        blazorviewPaymentForm.Totalprice = orderlist.Totalprice;
+        navigation.NavigateTo("/confirm");
+    }
+
+
+    private async Task Generatefakedataz()
+    {
+        if (!await fakedata.Generatedatafromexternalapi(blazorviewPaymentForm))
+        {
+            Thanks = "failed to fetch data";
+        }
+            
+    }
+
+
+}

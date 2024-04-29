@@ -1,0 +1,29 @@
+﻿@page "/logout"
+@inject NavigationManager nav
+
+
+@code {
+
+    [CascadingParameter]
+    HttpContext httpContext { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+
+        if (httpContext.User.Identity.IsAuthenticated)
+        {
+            await httpContext.SignOutAsync();
+            nav.NavigateTo("/",true);
+        }
+        else
+        {
+            nav.NavigateTo("/", true);
+        }
+
+    }
+   
+
+
+
+
+}

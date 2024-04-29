@@ -1,0 +1,97 @@
+﻿@page "/Login"
+
+
+
+
+@inject ICrudController askandcheck
+@inject ILogindata logindata;
+@inject NavigationManager nav
+
+
+<PageTitle>LoginPage</PageTitle>
+
+
+
+
+ <section class="container" style="margin-top:200px;width:500px">
+
+    <EditForm Model="Input" method="post" OnValidSubmit="Loginmethod" FormName="login">
+                <DataAnnotationsValidator />
+        <h2> <p> user: @logindata.Getcredentials()[0] </p> <p> pass: @logindata.Getcredentials()[1] </p></h2>
+                <hr />
+                <ValidationSummary class="text-danger" role="alert" />
+                <div class="form-floating mb-3">
+                    <InputText @bind-Value="Input.User" class="form-control" autocomplete="username" aria-required="true" placeholder="admin" />
+                    <label  class="form-label">user</label>
+                    <ValidationMessage For="() => Input.User" class="text-danger" />
+                </div>
+                <div class="form-floating mb-3">
+                    <InputText type="password" @bind-Value="Input.Password" class="form-control" autocomplete="current-password" aria-required="true" placeholder="password" />
+                    <label for="password" class="form-label">Password</label>
+                    <ValidationMessage For="() => Input.Password" class="text-danger" />
+                </div>
+               
+                <div>
+                    <button type="submit" class="w-100 btn btn-lg btn-primary">Log in</button>
+                </div>
+            </EditForm>
+ </section>
+
+
+@code {
+    [SupplyParameterFromForm]
+    private InputModel Input { get; set; } = new();
+
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+
+    private int currentCount = 0;
+
+
+
+
+    private async Task Loginmethod()
+    {
+        if (logindata.Authlogin(Input.User, Input.Password)){}
+        else
+        {
+            nav.Refresh();
+            return;
+        }
+
+
+
+
+
+
+        var claim = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name , "Admin")
+        };
+
+
+        var userIdentity = new ClaimsIdentity(claim, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(userIdentity);
+        await HttpContext.SignInAsync(principal);
+
+
+
+        nav.NavigateTo("/Adminpage");
+
+
+
+    }
+
+
+    private sealed class InputModel
+    {
+        [Required]
+        public string User { get; set; } = "";
+
+        [Required]
+        [DataType(DataType.Password)]
+        public string Password { get; set; } = "";
+
+        
+    }
+}
