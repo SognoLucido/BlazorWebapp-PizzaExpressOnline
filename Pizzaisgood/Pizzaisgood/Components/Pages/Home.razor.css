@@ -9,8 +9,15 @@
     #offcanvas-list {
         display: none !important;
     }
-}
 
+    #mainHomepage {
+        margin-bottom: 100px;
+    }
+}
+#mainHomepage {
+    margin-top:100px;
+    
+}
 
 .pizza-cards {
     display: grid;

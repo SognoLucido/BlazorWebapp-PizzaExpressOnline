@@ -12,13 +12,13 @@
     
     <div class="container pb-4" style="margin-top:200px">
             <div class="row">
-                <div class="col-md-6 d-flex d-xl-flex justify-content-end justify-content-xl-end">
-            <button class="btn btn-danger shadow" disabled="@BlazorviewPaymentForm.notActive" style="width: 50%;" @onclick="(()=>Transaction(false))">
+                <div class="col">
+            <button class="btn btn-danger shadow" disabled="@BlazorviewPaymentForm.notActive" style="width: 100%;" @onclick="(()=>Transaction(false))">
                         <br><strong>Payment Declined</strong><br><br>
                      </button>
                 </div>
-                <div class="col-md-6 d-flex justify-content-start">
-                <button class="btn btn-primary shadow" type="button" disabled="@BlazorviewPaymentForm.notActive" style="width: 50%;" @onclick="(()=>Transaction(true))">
+                <div class="col">
+                <button class="btn btn-primary shadow" type="button" disabled="@BlazorviewPaymentForm.notActive" style="width: 100%;" @onclick="(()=>Transaction(true))">
                         <br><strong>Transaction Approved</strong><br><br>
                     </button>
                 </div>
@@ -86,7 +86,7 @@
 
 
         // BlazorviewPaymentForm = null;
-        navigation.NavigateTo("/", true);
+        navigation.NavigateTo("/",true,false);
     }
 
 

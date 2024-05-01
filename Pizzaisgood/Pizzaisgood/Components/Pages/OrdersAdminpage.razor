@@ -1,10 +1,11 @@
 ﻿@page "/Adminpage"
 
-@attribute [Authorize]
+@attribute [Authorize(Roles ="Admin")]
 @rendermode InteractiveServer
 @inject ICrudController controller
 @inject IAdminpagedatasingleton admindata
 
+<PageTitle>Admin</PageTitle>
 
 <div class="container" style="margin-top:150px">
    

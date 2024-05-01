@@ -43,7 +43,7 @@
     private InputModel Input { get; set; } = new();
 
     [CascadingParameter]
-    public HttpContext? HttpContext { get; set; }
+    private HttpContext HttpContext { get; set; } = default!;
 
     private int currentCount = 0;
 
@@ -55,7 +55,7 @@
         if (logindata.Authlogin(Input.User, Input.Password)){}
         else
         {
-            nav.Refresh();
+            nav.Refresh(true);
             return;
         }
 
@@ -66,7 +66,7 @@
 
         var claim = new List<Claim>
         {
-            new Claim(ClaimTypes.Name , "Admin")
+            new Claim(ClaimTypes.Role , "Admin")
         };
 
 

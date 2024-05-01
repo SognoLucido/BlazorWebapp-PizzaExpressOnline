@@ -3,9 +3,8 @@
 
 
 @code {
-
     [CascadingParameter]
-    HttpContext httpContext { get; set; }
+    HttpContext httpContext { get; set; } = default!;
 
     protected override async Task OnInitializedAsync()
     {
@@ -13,11 +12,11 @@
         if (httpContext.User.Identity.IsAuthenticated)
         {
             await httpContext.SignOutAsync();
-            nav.NavigateTo("/",true);
+            nav.NavigateTo("/");
         }
         else
         {
-            nav.NavigateTo("/", true);
+            nav.NavigateTo("/");
         }
 
     }

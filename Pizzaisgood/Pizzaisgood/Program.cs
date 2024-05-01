@@ -8,6 +8,7 @@ using Pizzaisgood.Data.BlazorViewDataModel;
 using Pizzaisgood.Data.Databasecrud;
 using Pizzaisgood.InmemoryDatasingleton;
 using Pizzaisgood.Data.Loginlogic;
+using Microsoft.AspNetCore.HttpOverrides;
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -22,12 +23,18 @@ builder.Services.AddRazorComponents()
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.Strict;
         options.Cookie.Name = "pizza_is_good";
-        options.LoginPath = "/Login";
+        options.LoginPath = "/login";
         options.Cookie.MaxAge = TimeSpan.FromMinutes(10);
-        options.AccessDeniedPath = "/";
+        options.Validate();
+       // options.AccessDeniedPath = "/deci"; 
+        
 
     });
+
 
 builder.Services.AddAuthorization();
 builder.Services.AddCascadingAuthenticationState();
@@ -56,6 +63,11 @@ builder.Services.AddScoped<Orderlist>();
 
 var app = builder.Build();
 
+app.UseForwardedHeaders(new ForwardedHeadersOptions
+{
+    ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
+});
+
 await app.UseMemoryFill();
 
 
@@ -75,8 +87,7 @@ app.UseHttpsRedirection();
 
 app.UseStaticFiles();
 app.UseAntiforgery();
-app.UseAuthentication();
-app.UseAuthorization();
+
 
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
